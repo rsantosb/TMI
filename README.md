@@ -7,8 +7,8 @@ Máster en Ingeniería Informática, UCM.
 *Participantes:*
 - Rocío Santos
 - Paloma Gutiérrez
--
--
+- Carlos Gavidia
+- Iván Monterrubio
 
 ---
 ## Proyecto:
