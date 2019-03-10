@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +52,7 @@ public class ReconocedorCuadros extends AppCompatActivity  {
     private static final int MAX_LABEL_RESULTS = 10;
     private static final int MAX_DIMENSION = 1200;
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = ReconocedorCuadros.class.getSimpleName();
     private static final int GALLERY_PERMISSIONS_REQUEST = 0;
     private static final int GALLERY_IMAGE_REQUEST = 1;
     public static final int CAMERA_PERMISSIONS_REQUEST = 2;
@@ -68,8 +69,9 @@ public class ReconocedorCuadros extends AppCompatActivity  {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
+
         fab.setOnClickListener(view -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ReconocedorCuadros.this);
             builder
                     .setMessage(R.string.dialog_select_prompt)
                     .setPositiveButton(R.string.dialog_select_gallery, (dialog, which) -> startGalleryChooser())
@@ -230,10 +232,10 @@ public class ReconocedorCuadros extends AppCompatActivity  {
     }
 
     private static class LableDetectionTask extends AsyncTask<Object, Void, String> {
-        private final WeakReference<MainActivity> mActivityWeakReference;
+        private final WeakReference<ReconocedorCuadros> mActivityWeakReference;
         private Vision.Images.Annotate mRequest;
 
-        LableDetectionTask(MainActivity activity, Vision.Images.Annotate annotate) {
+        LableDetectionTask(ReconocedorCuadros activity, Vision.Images.Annotate annotate) {
             mActivityWeakReference = new WeakReference<>(activity);
             mRequest = annotate;
         }
@@ -255,7 +257,7 @@ public class ReconocedorCuadros extends AppCompatActivity  {
         }
 
         protected void onPostExecute(String result) {
-            MainActivity activity = mActivityWeakReference.get();
+            ReconocedorCuadros activity = mActivityWeakReference.get();
             if (activity != null && !activity.isFinishing()) {
                 TextView imageDetail = activity.findViewById(R.id.image_details);
                 imageDetail.setText(result);
@@ -269,7 +271,7 @@ public class ReconocedorCuadros extends AppCompatActivity  {
 
         // Do the real work in an async task, because we need to use the network anyway
         try {
-            AsyncTask<Object, Void, String> labelDetectionTask = new LableDetectionTask(this, prepareAnnotationRequest(bitmap));
+            AsyncTask<Object, Void, String> labelDetectionTask = new LableDetectionTask(ReconocedorCuadros.this, prepareAnnotationRequest(bitmap));
             labelDetectionTask.execute();
         } catch (IOException e) {
             Log.d(TAG, "failed to make API request because of other IOException " +
