@@ -1,34 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:fitsSystemWindows="true"
-tools:context="tmi.busho.ReconocedorCuadros">
-
-<android.support.design.widget.AppBarLayout
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:theme="@style/AppTheme.AppBarOverlay">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
+        android:layout_height="match_parent"
+        tools:context="tmi.busho.ReconocedorCuadros">
 
-</android.support.design.widget.AppBarLayout>
+        <ProgressBar
+            android:id="@+id/imageProgress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            tools:visibility="visible" />
 
-<include layout="@layout/content_cuadros" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_below="@+id/imageProgress"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            app:srcCompat="@android:drawable/alert_dark_frame" />
 
-<android.support.design.widget.FloatingActionButton
-    android:id="@+id/fab"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom|end"
-    android:layout_margin="@dimen/fab_margin"
-    android:src="@android:drawable/ic_menu_gallery" />
+        <Button
+            android:id="@+id/takePicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/imageView"
+            android:layout_below="@+id/imageView"
+            android:text="Take Picture" />
 
-</android.support.design.widget.CoordinatorLayout>
+        <Spinner
+            android:id="@+id/spinnerVisionAPI"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/takePicture"
+            android:layout_alignStart="@+id/imageView"
+            android:layout_below="@+id/imageView"
+            android:layout_toStartOf="@+id/takePicture" />
+
+        <TextView
+            android:id="@+id/visionAPIData"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignEnd="@+id/takePicture"
+            android:layout_alignStart="@+id/spinnerVisionAPI"
+            android:layout_below="@+id/spinnerVisionAPI"
+            android:layout_marginTop="24dp"
+            android:gravity="left"
+            android:textSize="18dp"
+            tools:text="Text LAbele" />
+    </RelativeLayout>
+</ScrollView>
