@@ -19,7 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ReconocedorCuadros" />
+        <activity android:name=".ReconocedorCuadros"  android:launchMode="singleTop"
+            />
+
         <activity android:name=".FiltrosCuadros"></activity>
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -40,23 +40,14 @@
             android:layout_below="@+id/imageView"
             android:text="Take Picture" />
 
-        <Spinner
-            android:id="@+id/spinnerVisionAPI"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/takePicture"
-            android:layout_alignStart="@+id/imageView"
-            android:layout_below="@+id/imageView"
-            android:layout_toStartOf="@+id/takePicture" />
-
         <TextView
             android:id="@+id/visionAPIData"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignEnd="@+id/takePicture"
-            android:layout_alignStart="@+id/spinnerVisionAPI"
-            android:layout_below="@+id/spinnerVisionAPI"
-            android:layout_marginTop="24dp"
+            android:layout_alignStart="@+id/imageView"
+            android:layout_below="@+id/imageView"
+            android:layout_marginTop="60dp"
             android:gravity="left"
             android:textSize="18dp"
             tools:text="Text LAbele" />
