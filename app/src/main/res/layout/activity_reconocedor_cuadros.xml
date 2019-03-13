@@ -51,5 +51,23 @@
             android:gravity="left"
             android:textSize="18dp"
             tools:text="Text LAbele" />
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignStart="@+id/visionAPIData"
+            android:layout_below="@+id/visionAPIData"
+            android:layout_marginTop="60dp"
+            android:layout_weight="0.5" />
+
+        <TextView
+            android:id="@+id/contentView"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignStart="@+id/visionAPIData"
+            android:layout_below="@+id/visionAPIData"
+            android:layout_marginTop="60dp"
+            android:layout_weight="0.5" />
+
     </RelativeLayout>
 </ScrollView>

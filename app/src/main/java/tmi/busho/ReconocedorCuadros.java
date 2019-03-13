@@ -1,6 +1,7 @@
 package tmi.busho;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,6 +24,8 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -43,9 +46,15 @@ import com.google.api.services.vision.v1.model.Image;
 import com.google.api.services.vision.v1.model.ImageProperties;
 import com.google.api.services.vision.v1.model.SafeSearchAnnotation;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -93,8 +102,10 @@ public class ReconocedorCuadros extends AppCompatActivity implements AdapterView
     private String[] visionAPI = new String[]{"LANDMARK_DETECTION", "LOGO_DETECTION", "SAFE_SEARCH_DETECTION", "IMAGE_PROPERTIES", "LABEL_DETECTION"};
 
     private String api = visionAPI[0];
+    WebView webView;
+    TextView contentView;
 
-
+    @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +115,12 @@ public class ReconocedorCuadros extends AppCompatActivity implements AdapterView
         feature = new Feature();
         feature.setType(visionAPI[0]);
         feature.setMaxResults(10);
+
+        //
+        webView = (WebView) findViewById(R.id.webView);
+        contentView = (TextView) findViewById(R.id.contentView);
+
+        //
 
         /*spinnerVisionAPI.setOnItemSelectedListener(this);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, visionAPI);
@@ -207,53 +224,79 @@ public class ReconocedorCuadros extends AppCompatActivity implements AdapterView
                 return "Cloud Vision API request failed. Check logs for details.";
             }
 
+            @SuppressLint("JavascriptInterface")
             protected void onPostExecute(String result) {
-                visionAPIData.setText(result);
-                Intent intent = getIntent();
-                //if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-                String query = intent.getStringExtra(SearchManager.QUERY);
 
-                Toast.makeText(getApplicationContext(), query, Toast.LENGTH_LONG).show();
-                //}
+                //sacamos de result el museo y el nombre del cuadro:
+                int cero=0;
+                int i=0;
+                while (cero==0 && i < result.length()){
+                    if (result.charAt(i) == '0'){ // si llegamos a cuando pone lo de 0,43233... entonces cortamos eso
+                        cero =1;
+                    }
+                    else{
+                        i++;
+                    }
+
+                }
+                result= result.substring(0,i);
+                visionAPIData.setText(result);//mostramos solo el museo y el nombre del cuadro
+                //a continuacion conseguimos solo el nombre del cuadro para poder buscarlo en google:
+                int coma=0;
+                i=0;
+                while (coma==0 && i < result.length()){
+                    if (result.charAt(i) == ','){ // si llegamos a cuando pone lo de 0,43233... entonces cortamos eso
+                        coma =1;
+                    }
+                    else{
+                        i++;
+                    }
+
+                }
+                //obtenemos solo el nombre del cuadro
+                result= result.substring(i+1,result.length());
+                /////////
+                class MyJavaScriptInterface
+                {
+                    private TextView contentView;
+
+                    public MyJavaScriptInterface(TextView aContentView)
+                    {
+                        contentView = aContentView;
+                    }
+
+
+                    public void processContent(String aContent)
+                    {
+                        final String content = aContent;
+                        contentView.post(new Runnable()
+                        {
+                            public void run()
+                            {
+                                contentView.setText(content);
+                            }
+                        });
+                    }
+                }
+
+                ///////////
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.addJavascriptInterface(new MyJavaScriptInterface(contentView), "INTERFACE");
+                webView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageFinished(WebView view, String url)
+                    {
+                        view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
+                    }
+                });
+                String pagina = "https://es.wikipedia.org/wiki/"+result;
+                webView.loadUrl(pagina);
+
+                /////////
                 imageUploadProgress.setVisibility(View.INVISIBLE);
             }
         }.execute();
     }
-    /*private class DownloadWebPageTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-            String response = "";
-            for (String url : urls) {
-                DefaultHttpClient client = new DefaultHttpClient();
-                HttpGet httpGet = new HttpGet(url);
-                try {
-                    HttpResponse execute = client.execute(httpGet);
-                    InputStream content = execute.getEntity().getContent();
-
-                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
-                    String s = "";
-                    while ((s = buffer.readLine()) != null) {
-                        response += s;
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            visionAPIData.setText(Html.fromHtml(result));
-        }
-    }*/
-
-    /*public void readWebpage(View view) {
-        DownloadWebPageTask task = new DownloadWebPageTask();
-        task.execute(new String[] { "http://www.google.com" });
-
-    }*/
 
     @NonNull
     private Image getImageEncodeImage(Bitmap bitmap) {
