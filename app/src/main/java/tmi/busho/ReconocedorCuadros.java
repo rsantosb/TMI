@@ -105,9 +105,11 @@ public class ReconocedorCuadros extends AppCompatActivity implements AdapterView
     WebView webView;
     TextView contentView;
 
+    boolean refrescar;
     @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        refrescar =false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reconocedor_cuadros);
         ButterKnife.bind(this);
@@ -130,6 +132,12 @@ public class ReconocedorCuadros extends AppCompatActivity implements AdapterView
         takePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*if (refrescar==true) {
+                    refrescar=false;
+
+                    finish();
+                    startActivity(getIntent());
+                }*/
                 takePictureFromCamera();
             }
         });
@@ -156,6 +164,10 @@ public class ReconocedorCuadros extends AppCompatActivity implements AdapterView
 
     public void takePictureFromCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        visionAPIData.setText("");
+        contentView.setText("");
+        webView.setVisibility(View.GONE);
+        contentView.setVisibility(View.GONE);
         startActivityForResult(intent, CAMERA_REQUEST_CODE);
     }
 
@@ -226,76 +238,77 @@ public class ReconocedorCuadros extends AppCompatActivity implements AdapterView
 
             @SuppressLint("JavascriptInterface")
             protected void onPostExecute(String result) {
+                refrescar=true;
+                if (result == "Nothing Found") {//si no se ha reconocido el cuadro:
 
-                //sacamos de result el museo y el nombre del cuadro:
-                int cero=0;
-                int i=0;
-                while (cero==0 && i < result.length()){
-                    if (result.charAt(i) == '0'){ // si llegamos a cuando pone lo de 0,43233... entonces cortamos eso
-                        cero =1;
-                    }
-                    else{
-                        i++;
-                    }
-
+                    visionAPIData.setText("Cuadro no encontrado");
                 }
-                result= result.substring(0,i);
-                visionAPIData.setText(result);//mostramos solo el museo y el nombre del cuadro
-                //a continuacion conseguimos solo el nombre del cuadro para poder buscarlo en google:
-                int coma=0;
-                i=0;
-                while (coma==0 && i < result.length()){
-                    if (result.charAt(i) == ','){ // si llegamos a cuando pone lo de 0,43233... entonces cortamos eso
-                        coma =1;
+                else{
+                    //sacamos de result el museo y el nombre del cuadro:
+                    int cero = 0;
+                    int i = 0;
+                    while (cero == 0 && i < result.length()) {
+                        if (result.charAt(i) == '0') { // si llegamos a cuando pone lo de 0,43233... entonces cortamos eso
+                            cero = 1;
+                        } else {
+                            i++;
+                        }
+
                     }
-                    else{
-                        i++;
+                    result = result.substring(0, i);
+                    visionAPIData.setText(result);//mostramos solo el museo y el nombre del cuadro
+                    //a continuacion conseguimos solo el nombre del cuadro para poder buscarlo en google:
+                    int coma = 0;
+                    i = 0;
+                    while (coma == 0 && i < result.length()) {
+                        if (result.charAt(i) == ',') { // si llegamos a cuando pone lo de 0,43233... entonces cortamos eso
+                            coma = 1;
+                        } else {
+                            i++;
+                        }
+
+                    }
+                    //obtenemos solo el nombre del cuadro
+                    result = result.substring(i + 1, result.length());
+                    /////////
+                    class MyJavaScriptInterface {
+                        private TextView contentView;
+
+                        public MyJavaScriptInterface(TextView aContentView) {
+                            contentView = aContentView;
+                        }
+
+
+                        public void processContent(String aContent) {
+                            final String content = aContent;
+                            contentView.post(new Runnable() {
+                                public void run() {
+                                    contentView.setText(content);
+                                }
+                            });
+                        }
                     }
 
+                    ///////////
+                    webView.setVisibility(View.VISIBLE);
+                    webView.getSettings().setJavaScriptEnabled(true);
+                    webView.addJavascriptInterface(new MyJavaScriptInterface(contentView), "INTERFACE");
+                    webView.setWebViewClient(new WebViewClient() {
+                        @Override
+                        public void onPageFinished(WebView view, String url) {
+                            view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
+                        }
+                    });
+                    String pagina = "https://es.wikipedia.org/wiki/" + result;
+                    webView.loadUrl(pagina);
+
+                    /////////
+                    imageUploadProgress.setVisibility(View.INVISIBLE);
                 }
-                //obtenemos solo el nombre del cuadro
-                result= result.substring(i+1,result.length());
-                /////////
-                class MyJavaScriptInterface
-                {
-                    private TextView contentView;
-
-                    public MyJavaScriptInterface(TextView aContentView)
-                    {
-                        contentView = aContentView;
-                    }
-
-
-                    public void processContent(String aContent)
-                    {
-                        final String content = aContent;
-                        contentView.post(new Runnable()
-                        {
-                            public void run()
-                            {
-                                contentView.setText(content);
-                            }
-                        });
-                    }
-                }
-
-                ///////////
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.addJavascriptInterface(new MyJavaScriptInterface(contentView), "INTERFACE");
-                webView.setWebViewClient(new WebViewClient() {
-                    @Override
-                    public void onPageFinished(WebView view, String url)
-                    {
-                        view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
-                    }
-                });
-                String pagina = "https://es.wikipedia.org/wiki/"+result;
-                webView.loadUrl(pagina);
-
-                /////////
-                imageUploadProgress.setVisibility(View.INVISIBLE);
             }
+
         }.execute();
+
     }
 
     @NonNull
