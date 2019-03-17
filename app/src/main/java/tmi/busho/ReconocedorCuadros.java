@@ -1,6 +1,7 @@
 package tmi.busho;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +45,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class ReconocedorCuadros extends AppCompatActivity {
     private static final String CLOUD_VISION_API_KEY = "AIzaSyDvC2agj3PhxniAuukdznJ1lIaipXxGrpY";
@@ -60,10 +64,14 @@ public class ReconocedorCuadros extends AppCompatActivity {
 
     private TextView mImageDetails;
     private ImageView mMainImage;
+    WebView webView;
+    TextView contentView;
+    String mensaje;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mensaje="";
         setContentView(R.layout.activity_reconocedor_cuadros);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,19 +88,31 @@ public class ReconocedorCuadros extends AppCompatActivity {
 
         mImageDetails = findViewById(R.id.image_details);
         mMainImage = findViewById(R.id.main_image);
+        //
+        webView = (WebView) findViewById(R.id.webView);
+        contentView = (TextView) findViewById(R.id.contentView);
+
+
+        //
     }
 
     public void startGalleryChooser() {
+        contentView.setText("");
+        webView.setVisibility(View.GONE);
+        contentView.setVisibility(View.GONE);
         if (PermissionUtils.requestPermission(this, GALLERY_PERMISSIONS_REQUEST, Manifest.permission.READ_EXTERNAL_STORAGE)) {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select a photo"),
+            startActivityForResult(Intent.createChooser(intent, "Selecciona una imagen"),
                     GALLERY_IMAGE_REQUEST);
         }
     }
 
     public void startCamera() {
+        contentView.setText("");
+        webView.setVisibility(View.GONE);
+        contentView.setVisibility(View.GONE);
         if (PermissionUtils.requestPermission(
                 this,
                 CAMERA_PERMISSIONS_REQUEST,
@@ -230,7 +250,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
         return annotateRequest;
     }
 
-    private static class LableDetectionTask extends AsyncTask<Object, Void, String> {
+    private class LableDetectionTask extends AsyncTask<Object, Void, String> {
         private final WeakReference<ReconocedorCuadros> mActivityWeakReference;
         private Vision.Images.Annotate mRequest;
 
@@ -240,7 +260,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(Object... params) {
+        protected  String doInBackground(Object... params) {
             try {
                 Log.d(TAG, "created Cloud Vision request object, sending request");
                 BatchAnnotateImagesResponse response = mRequest.execute();
@@ -255,18 +275,35 @@ public class ReconocedorCuadros extends AppCompatActivity {
             return "Cloud Vision API request failed. Check logs for details.";
         }
 
+        @SuppressLint("JavascriptInterface")
         protected void onPostExecute(String result) {
             ReconocedorCuadros activity = mActivityWeakReference.get();
             if (activity != null && !activity.isFinishing()) {
                 TextView imageDetail = activity.findViewById(R.id.image_details);
                 imageDetail.setText(result);
+                ///////////
+                webView.setVisibility(View.VISIBLE);
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.addJavascriptInterface(new MyJavaScriptInterface(contentView), "INTERFACE");
+                webView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
+                    }
+                });
+                String pagina = "https://es.wikipedia.org/wiki/" + mensaje;
+                webView.loadUrl(pagina);
+
+
+                ///
             }
         }
     }
 
+
     private void callCloudVision(final Bitmap bitmap) {
         // Switch text to loading
-        mImageDetails.setText(R.string.loading_message);
+        mImageDetails.setText("Buscando el cuadro...");
 
         // Do the real work in an async task, because we need to use the network anyway
         try {
@@ -297,19 +334,39 @@ public class ReconocedorCuadros extends AppCompatActivity {
         }
         return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
     }
+    ////
+    class MyJavaScriptInterface {
+        private TextView contentView;
 
-    private static String convertResponseToString(BatchAnnotateImagesResponse response) {
-        StringBuilder message = new StringBuilder("I found these things:\n\n");
+        public MyJavaScriptInterface(TextView aContentView) {
+            contentView = aContentView;
+        }
+
+        public void processContent(String aContent) {
+            final String content = aContent;
+            contentView.post(new Runnable() {
+                public void run() {
+                    contentView.setText(content);
+                }
+            });
+        }
+    }
+
+
+    private String convertResponseToString(BatchAnnotateImagesResponse response) {
+        StringBuilder message = new StringBuilder("");
 
         WebDetection labels = response.getResponses().get(0).getWebDetection();
 
         if (labels != null) {
             List<WebEntity> web = labels.getWebEntities();
             if (web !=null){
+                mensaje= web.get(0).getDescription();
                 message.append(web.get(0).getDescription());
+
             }
             else{
-                message.append("nothing2");
+                message.append("Prueba a hacer otra foto al cuadro");
             }
             /*for (EntityAnnotation label : labels) {
                 message.append(String.format(Locale.US, "%.3f: %s", label.getScore(), label.getDescription()));
@@ -317,7 +374,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
             }*/
 
         } else {
-            message.append("nothing");
+            message.append("No se ha encontrado cuadro");
         }
 
         return message.toString();
