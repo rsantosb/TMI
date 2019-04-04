@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,6 +89,14 @@ public class ReconocedorCuadros extends AppCompatActivity {
                     .setPositiveButton(R.string.dialog_select_gallery, (dialog, which) -> startGalleryChooser())
                     .setNegativeButton(R.string.dialog_select_camera, (dialog, which) -> startCamera());
             builder.create().show();
+        });
+
+        FloatingActionButton RA_button = findViewById(R.id.RA_button);
+        RA_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intentRA= new Intent (ReconocedorCuadros.this, MostrarRA.class);
+                startActivity(intentRA);
+            }
         });
 
         mImageDetails = findViewById(R.id.image_details);
