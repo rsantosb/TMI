@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
+import com.google.api.services.vision.v1.model.Landmark;
 import com.google.api.services.vision.v1.model.WebDetection;
 import com.google.api.services.vision.v1.model.WebEntity;
 
@@ -72,9 +74,11 @@ public class ReconocedorCuadros extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mensaje="";
+
         setContentView(R.layout.activity_reconocedor_cuadros);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().hide();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
@@ -91,6 +95,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
         //
         webView = (WebView) findViewById(R.id.webView);
         contentView = (TextView) findViewById(R.id.contentView);
+
 
 
         //
@@ -235,6 +240,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
                 labelDetection.setType("WEB_DETECTION");
                 //labelDetection.setMaxResults(MAX_LABEL_RESULTS);
                 add(labelDetection);
+
             }});
 
             // Add the list of one thing to the request
@@ -291,8 +297,14 @@ public class ReconocedorCuadros extends AppCompatActivity {
                         view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
                     }
                 });
-                String pagina = "https://es.wikipedia.org/wiki/" + mensaje;
-                webView.loadUrl(pagina);
+                if (mensaje.equals("Prueba a hacer otra foto al cuadro")){
+                    webView.setVisibility(View.INVISIBLE);
+                    mImageDetails.setText("No se ha encontrado el cuadro. Prueba a hacer otra foto al cuadro");
+                }
+                else {
+                    String pagina = "https://es.wikipedia.org/wiki/" + mensaje;
+                    webView.loadUrl(pagina);
+                }
 
 
                 ///
@@ -304,7 +316,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
     private void callCloudVision(final Bitmap bitmap) {
         // Switch text to loading
         mImageDetails.setText("Buscando el cuadro...");
-
+        mImageDetails.setGravity(Gravity.CENTER);
         // Do the real work in an async task, because we need to use the network anyway
         try {
             AsyncTask<Object, Void, String> labelDetectionTask = new LableDetectionTask(this, prepareAnnotationRequest(bitmap));
@@ -357,12 +369,19 @@ public class ReconocedorCuadros extends AppCompatActivity {
         StringBuilder message = new StringBuilder("");
 
         WebDetection labels = response.getResponses().get(0).getWebDetection();
+        //LandmarkAnnotations landmark= response.getResponses().get(0).getLandmarkAnnotations();
 
         if (labels != null) {
             List<WebEntity> web = labels.getWebEntities();
             if (web !=null){
                 mensaje= web.get(0).getDescription();
-                message.append(web.get(0).getDescription());
+                if (mensaje.equals("Desktop Wallpaper")||mensaje.equals("Black") || mensaje.equals("null")|| mensaje.equals("Light")){
+                    message.append("Prueba a hacer otra foto al cuadro");
+                    mensaje= "Prueba a hacer otra foto al cuadro";
+                }
+                else {
+                    message.append(web.get(0).getDescription());
+                }
 
             }
             else{

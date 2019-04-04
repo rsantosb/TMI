@@ -22,6 +22,7 @@
         <activity android:name=".ReconocedorCuadros"  android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
+
             </intent-filter>
 
         </activity>
