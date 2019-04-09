@@ -30,15 +30,15 @@
 
             <TextView
                 android:id="@+id/image_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_alignStart="@+id/main_image"
-                android:textSize="20dp"
-                android:layout_marginTop="60dp"
-                android:textColor="#000000"
                 android:layout_marginBottom="8dp"
-                android:text="Usa el botón flotante para seleccionar un imagen" />
+                android:layout_marginTop="60dp"
+                android:gravity="center"
+                android:text="Busho"
+                android:textColor="#000000"
+                android:textSize="100dp" />
 
 
             <WebView

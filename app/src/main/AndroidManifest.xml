@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="tmi.busho"> <!-- "AR Optional" apps must declare minSdkVersion ≥ 14 -->
-
+    package="tmi.busho">
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <!-- This tag indicates that this application requires ARCore. This results in the application
-        only being visible in the Google Play Store on devices that support ARCore. -->
-    <uses-feature android:name="android.hardware.camera.ar" android:required="true"/>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MostrarRA"></activity>
+        android:theme="@style/AppTheme">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,16 +19,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ReconocedorCuadros"
-            android:launchMode="singleTop">
+        <activity android:name=".ReconocedorCuadros"  android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
-
             </intent-filter>
-        </activity>
-        <activity android:name=".FiltrosCuadros" />
 
+        </activity>
+
+        <activity android:name=".FiltrosCuadros"></activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -43,15 +34,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
+                android:resource="@xml/provider_paths"/>
         </provider>
-        <!--
- Indicates that app supports, but does not require ARCore ("AR Optional").
-         Unlike "AR Required" apps, Google Play Store will not automatically
-         download and install ARCore when the app is installed.
-        -->
-        <meta-data
-            android:name="com.google.ar.core" android:value="required" />
     </application>
 
 </manifest>

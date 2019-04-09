@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -91,15 +92,11 @@ public class ReconocedorCuadros extends AppCompatActivity {
             builder.create().show();
         });
 
-        FloatingActionButton RA_button = findViewById(R.id.RA_button);
-        RA_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intentRA= new Intent (ReconocedorCuadros.this, MostrarRA.class);
-                startActivity(intentRA);
-            }
-        });
-
         mImageDetails = findViewById(R.id.image_details);
+        Typeface fuente = Typeface.createFromAsset(getAssets(), "fonts/Parisienne-Regular.ttf");
+
+        // Aplicamos la fuente
+        mImageDetails.setTypeface(fuente);
         mMainImage = findViewById(R.id.main_image);
         //
         webView = (WebView) findViewById(R.id.webView);
@@ -308,6 +305,10 @@ public class ReconocedorCuadros extends AppCompatActivity {
                 });
                 if (mensaje.equals("Prueba a hacer otra foto al cuadro")){
                     webView.setVisibility(View.INVISIBLE);
+                    Typeface fuente = Typeface.createFromAsset(getAssets(), "fonts/Lato-Regular.ttf");
+                    mImageDetails.setTypeface(fuente);
+                    mImageDetails.setTextSize(22);
+                    mImageDetails.setGravity(Gravity.CENTER);
                     mImageDetails.setText("No se ha encontrado el cuadro. Prueba a hacer otra foto al cuadro");
                 }
                 else {
@@ -324,8 +325,12 @@ public class ReconocedorCuadros extends AppCompatActivity {
 
     private void callCloudVision(final Bitmap bitmap) {
         // Switch text to loading
+        Typeface fuente = Typeface.createFromAsset(getAssets(), "fonts/Lato-Regular.ttf");
+        mImageDetails.setTypeface(fuente);
         mImageDetails.setText("Buscando el cuadro...");
+        mImageDetails.setTextSize(22);
         mImageDetails.setGravity(Gravity.CENTER);
+
         // Do the real work in an async task, because we need to use the network anyway
         try {
             AsyncTask<Object, Void, String> labelDetectionTask = new LableDetectionTask(this, prepareAnnotationRequest(bitmap));
