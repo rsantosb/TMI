@@ -312,6 +312,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
                     mImageDetails.setText("No se ha encontrado el cuadro. Prueba a hacer otra foto al cuadro");
                 }
                 else {
+                    
                     String pagina = "https://es.wikipedia.org/wiki/" + mensaje;
                     webView.loadUrl(pagina);
                 }

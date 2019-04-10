@@ -1,22 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tmi.busho.MainActivity">
+    tools:context="tmi.busho.MainActivity"
+    android:background="@drawable/fondo">
+
+    <TextView
+        android:id="@+id/image_details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignStart="@+id/main_image"
+        android:layout_marginBottom="400dp"
+        android:gravity="center"
+        android:text="Busho"
+        android:textColor="#000000"
+        android:textSize="100dp" />
+
+    <ImageView
+        android:id="@+id/main_image1"
+        android:src="@drawable/e"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="20dp"
+        android:scaleType="fitCenter"/>
+
+    <ImageView
+        android:id="@+id/main_image2"
+        android:src="@drawable/l"
+        android:layout_width="150dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="200dp"
+        android:layout_height="200dp"
+        android:scaleType="fitCenter"/>
 
 
     <Button
         android:id="@+id/btn_reconocedor"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="Reconocedor de imágenes" />
+        android:layout_marginTop="430dp"
+        android:layout_marginLeft="210dp"
+        android:backgroundTint="#81d8d0 "
+        android:text="Reconocedor" />
     <Button
         android:id="@+id/btn_jugar"
         android:layout_height="wrap_content"
-
+        android:layout_marginLeft="50dp"
         android:layout_width="wrap_content"
+        android:layout_marginTop="430dp"
+        android:backgroundTint="#81d8d0 "
         android:text="Filtros" />
 
-</LinearLayout>
+</RelativeLayout>
