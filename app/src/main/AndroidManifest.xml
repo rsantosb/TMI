@@ -18,7 +18,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MostrarRA"></activity>
+        <!-- This tag indicates that this application requires ARCore. This results in the
+            application only being visible in the Google Play Store on devices that support
+            ARCore. -->
+        <meta-data
+            android:name="com.google.ar.core" android:value="required" />
+
+        <activity android:name=".MostrarRA" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,13 +50,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-        <!--
- Indicates that app supports, but does not require ARCore ("AR Optional").
-         Unlike "AR Required" apps, Google Play Store will not automatically
-         download and install ARCore when the app is installed.
-        -->
-        <meta-data
-            android:name="com.google.ar.core" android:value="required" />
     </application>
 
 </manifest>
