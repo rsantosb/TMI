@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -36,6 +38,7 @@ import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
+import com.google.api.services.vision.v1.model.Landmark;
 import com.google.api.services.vision.v1.model.WebDetection;
 import com.google.api.services.vision.v1.model.WebEntity;
 
@@ -73,9 +76,11 @@ public class ReconocedorCuadros extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mensaje="";
+
         setContentView(R.layout.activity_reconocedor_cuadros);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().hide();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
@@ -87,19 +92,16 @@ public class ReconocedorCuadros extends AppCompatActivity {
             builder.create().show();
         });
 
-        FloatingActionButton RA_button = findViewById(R.id.RA_button);
-        RA_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intentRA= new Intent (ReconocedorCuadros.this, MostrarRA.class);
-                startActivity(intentRA);
-            }
-        });
-
         mImageDetails = findViewById(R.id.image_details);
+        Typeface fuente = Typeface.createFromAsset(getAssets(), "fonts/Parisienne-Regular.ttf");
+
+        // Aplicamos la fuente
+        mImageDetails.setTypeface(fuente);
         mMainImage = findViewById(R.id.main_image);
         //
         webView = (WebView) findViewById(R.id.webView);
         contentView = (TextView) findViewById(R.id.contentView);
+
 
 
         //
@@ -244,6 +246,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
                 labelDetection.setType("WEB_DETECTION");
                 //labelDetection.setMaxResults(MAX_LABEL_RESULTS);
                 add(labelDetection);
+
             }});
 
             // Add the list of one thing to the request
@@ -300,8 +303,19 @@ public class ReconocedorCuadros extends AppCompatActivity {
                         view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
                     }
                 });
-                String pagina = "https://es.wikipedia.org/wiki/" + mensaje;
-                webView.loadUrl(pagina);
+                if (mensaje.equals("Prueba a hacer otra foto al cuadro")){
+                    webView.setVisibility(View.INVISIBLE);
+                    Typeface fuente = Typeface.createFromAsset(getAssets(), "fonts/Lato-Regular.ttf");
+                    mImageDetails.setTypeface(fuente);
+                    mImageDetails.setTextSize(22);
+                    mImageDetails.setGravity(Gravity.CENTER);
+                    mImageDetails.setText("No se ha encontrado el cuadro. Prueba a hacer otra foto al cuadro");
+                }
+                else {
+                    
+                    String pagina = "https://es.wikipedia.org/wiki/" + mensaje;
+                    webView.loadUrl(pagina);
+                }
 
 
                 ///
@@ -312,7 +326,11 @@ public class ReconocedorCuadros extends AppCompatActivity {
 
     private void callCloudVision(final Bitmap bitmap) {
         // Switch text to loading
+        Typeface fuente = Typeface.createFromAsset(getAssets(), "fonts/Lato-Regular.ttf");
+        mImageDetails.setTypeface(fuente);
         mImageDetails.setText("Buscando el cuadro...");
+        mImageDetails.setTextSize(22);
+        mImageDetails.setGravity(Gravity.CENTER);
 
         // Do the real work in an async task, because we need to use the network anyway
         try {
@@ -366,12 +384,19 @@ public class ReconocedorCuadros extends AppCompatActivity {
         StringBuilder message = new StringBuilder("");
 
         WebDetection labels = response.getResponses().get(0).getWebDetection();
+        //LandmarkAnnotations landmark= response.getResponses().get(0).getLandmarkAnnotations();
 
         if (labels != null) {
             List<WebEntity> web = labels.getWebEntities();
             if (web !=null){
                 mensaje= web.get(0).getDescription();
-                message.append(web.get(0).getDescription());
+                if (mensaje.equals("Desktop Wallpaper")||mensaje.equals("Black") || mensaje.equals("null")|| mensaje.equals("Light")){
+                    message.append("Prueba a hacer otra foto al cuadro");
+                    mensaje= "Prueba a hacer otra foto al cuadro";
+                }
+                else {
+                    message.append(web.get(0).getDescription());
+                }
 
             }
             else{

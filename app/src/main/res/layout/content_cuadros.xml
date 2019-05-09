@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/fondo"
 
     tools:context="tmi.busho.ReconocedorCuadros"
     tools:showIn="@layout/activity_reconocedor_cuadros">
@@ -21,19 +22,25 @@
             android:layout_height="match_parent"
             android:layout_marginTop="70dp"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/image_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Usa el botón flotante para seleccionar un imagen"/>
-
             <ImageView
                 android:id="@+id/main_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:scaleType="fitCenter"/>
+
+            <TextView
+                android:id="@+id/image_details"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignStart="@+id/main_image"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="60dp"
+                android:gravity="center"
+                android:text="Busho"
+                android:textColor="#000000"
+                android:textSize="100dp" />
+
+
             <WebView
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
@@ -54,4 +61,5 @@
         </LinearLayout>
 
     </ScrollView>
+
 </RelativeLayout>

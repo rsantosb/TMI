@@ -12,5 +12,3 @@ Máster en Ingeniería Informática, UCM.
 
 ---
 ## Proyecto:
-
-* [Documentación del proyecto](https://github.com/rsantosb/TMI/wiki)
