@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="tmi.busho"> <!-- "AR Optional" apps must declare minSdkVersion ≥ 14 -->
-
+    package="tmi.busho">
+    <!-- "AR Optional" apps must declare minSdkVersion ≥ 14 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- This tag indicates that this application requires ARCore. This results in the application
-        only being visible in the Google Play Store on devices that support ARCore. -->
-    <uses-feature android:name="android.hardware.camera.ar" android:required="true"/>
+    <!--
+ This tag indicates that this application requires ARCore. This results in the application
+        only being visible in the Google Play Store on devices that support ARCore.
+    -->
+    <uses-feature
+        android:name="android.hardware.camera.ar"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -18,13 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <!-- This tag indicates that this application requires ARCore. This results in the
+        <activity android:name=".MostrarRA"></activity>
+        <!--
+         This tag indicates that this application requires ARCore. This results in the
             application only being visible in the Google Play Store on devices that support
-            ARCore. -->
+            ARCore.
+        -->
         <meta-data
-            android:name="com.google.ar.core" android:value="required" />
+            android:name="com.google.ar.core"
+            android:value="required" />
 
-        <activity android:name=".MostrarRA" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

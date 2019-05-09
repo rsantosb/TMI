@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "tmi.busho"
-        minSdkVersion 14
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -39,5 +39,8 @@ dependencies {
     implementation 'com.google.apis:google-api-services-vision:v1-rev369-1.23.0'
     implementation 'com.jakewharton:butterknife:8.7.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
-    implementation 'com.google.ar:core:1.7.0'
+    implementation 'com.google.ar:core:1.8.0'
+    implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.8.0'
+    implementation 'com.google.ar.sceneform:core:1.8.0'
+
 }
