@@ -19,6 +19,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,10 +37,8 @@ import com.google.api.services.vision.v1.VisionRequestInitializer;
 import com.google.api.services.vision.v1.model.AnnotateImageRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
-import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
-import com.google.api.services.vision.v1.model.Landmark;
 import com.google.api.services.vision.v1.model.WebDetection;
 import com.google.api.services.vision.v1.model.WebEntity;
 
@@ -48,9 +48,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 public class ReconocedorCuadros extends AppCompatActivity {
     private static final String CLOUD_VISION_API_KEY = "AIzaSyDvC2agj3PhxniAuukdznJ1lIaipXxGrpY";
@@ -71,6 +68,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
     WebView webView;
     TextView contentView;
     String mensaje;
+    Button button_ra;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +100,7 @@ public class ReconocedorCuadros extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.webView);
         contentView = (TextView) findViewById(R.id.contentView);
 
-
+        button_ra = findViewById(R.id.button_ra);
 
         //
     }
@@ -312,9 +310,15 @@ public class ReconocedorCuadros extends AppCompatActivity {
                     mImageDetails.setText("No se ha encontrado el cuadro. Prueba a hacer otra foto al cuadro");
                 }
                 else {
-                    
                     String pagina = "https://es.wikipedia.org/wiki/" + mensaje;
                     webView.loadUrl(pagina);
+                    button_ra.setVisibility(View.VISIBLE);
+                    button_ra.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            Intent mostrarRA= new Intent (ReconocedorCuadros.this, MostrarRA.class);
+                            startActivity(mostrarRA);
+                        }
+                    });
                 }
 
 

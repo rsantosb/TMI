@@ -15,26 +15,40 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="70dp"
             android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_ra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:backgroundTint="#E3F2FD"
+                android:gravity="center"
+                android:text="Ver información en Realidad Aumentada"
+                android:textColor="#3F51B5"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
             <ImageView
                 android:id="@+id/main_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter" />
 
             <TextView
                 android:id="@+id/image_details"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignStart="@+id/main_image"
-                android:layout_marginBottom="8dp"
                 android:layout_marginTop="60dp"
+                android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:text="Busho"
                 android:textColor="#000000"
@@ -45,8 +59,8 @@
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:layout_alignStart="@+id/main_image"
                 android:layout_below="@+id/main_image"
+                android:layout_alignStart="@+id/main_image"
                 android:layout_marginTop="60dp"
                 android:layout_weight="0.5" />
 
@@ -54,8 +68,8 @@
                 android:id="@+id/contentView"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:layout_alignStart="@+id/main_image"
                 android:layout_below="@+id/main_image"
+                android:layout_alignStart="@+id/main_image"
                 android:layout_marginTop="60dp"
                 android:layout_weight="0.5" />
         </LinearLayout>

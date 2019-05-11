@@ -11,6 +11,7 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 
 public class MostrarRA extends AppCompatActivity {
@@ -20,6 +21,7 @@ public class MostrarRA extends AppCompatActivity {
 
     Session mSession;
     private ArFragment arFragment;
+    ViewRenderable textArViewRenderable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,11 @@ public class MostrarRA extends AppCompatActivity {
 
         // Enable AR related functionality on ARCore supported devices only.
         //maybeEnableArButton();
+
+        ViewRenderable.builder()
+                .setView(this, R.layout.texto_ar)
+                .build()
+                .thenAccept(renderable -> textArViewRenderable = renderable);
     }
 
     /*void maybeEnableArButton() {
